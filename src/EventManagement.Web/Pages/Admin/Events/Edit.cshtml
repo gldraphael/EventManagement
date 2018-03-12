@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-12">
 
-        <form method="post">
+        <form id="main-form" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="EventInfo.EventInfoId" />
             <div class="row">
@@ -164,6 +164,65 @@
                 <span asp-validation-for="EventInfo.FeaturedImageCaption" class="text-danger"></span>
             </div>
 
+            <h2>Products</h2>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-product-modal">
+              Add Product
+            </button>
+            <div id="product-wrapper" class="form-group">
+                @for(int i = 0; i < Model.EventInfo.Products.Count; i++)
+                {
+                    var p = Model.EventInfo.Products[i];
+                    <div class="product-card">
+                        <input asp-for="EventInfo.Products[i].ProductId" type="hidden" />
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
+                                        <h5 class="card-title product-name">@p.Name</h5>
+                                        <p class="card-text product-description">@p.Description</p>
+                                        <!--If no variants exist-->
+                                        <h6 class="card-subtitle mb-2 text-muted product-price">@p.Price</h6>
+                                        <input class="product-m-count" type="hidden" value="@p.MandatoryCount" />
+                                    </div>
+                                    <div class="col-2">
+                                        <small>
+                                            <a href="#/" class="text-muted delete-product-link">Delete</a>
+                                            <br /><br />
+                                            <a href="#/" class="text-primary add-variant-link">Add Variant</a>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col variant-wrapper">
+                                @for(int j = 0; j < p.ProductVariants.Count; j++)
+                                {
+                                    var v = p.ProductVariants[j];
+                                    <div class="card variant-card">
+                                        <input asp-for="EventInfo.Products[i].ProductVariants[j].ProductVariantId" type="hidden" />
+                                        <div class="row">
+                                            <div class="col">
+                                                <h5 class="card-title variant-name">@v.Name</h5>
+                                                <p class="card-text variant-description">@v.Description</p>
+                                                <h6 class="card-subtitle mb-2 text-muted variant-price">@v.Price</h6>
+                                            </div>
+                                            <div class="col-2">
+                                                <small>
+                                                    <a href="#/" onclick="$(this).closest('.variant-card').remove()" class="text-muted delete-variant-link">Delete</a>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                @*Added products will be listed here.*@
+            </div>
+
     
             <div class="form-group">
                 <input type="submit" value="Lagre" class="btn btn-default" />
@@ -266,9 +325,9 @@
                 </div>
                 <div class="col-2">
                     <small>
-                        <a href="#" class="text-muted delete-product-link">Delete</a>
+                        <a href="#/" class="text-muted delete-product-link">Delete</a>
                         <br /><br />
-                        <a href="#" class="text-primary add-variant-link">Add Variant</a>
+                        <a href="#/" class="text-primary add-variant-link">Add Variant</a>
                     </small>
                 </div>
             </div>
@@ -294,7 +353,7 @@
         </div>
         <div class="col-2">
             <small>
-                <a href="#" onclick="$(this).closest('.variant-card').remove()" class="text-muted delete-variant-link">Delete</a>
+                <a href="#/" onclick="$(this).closest('.variant-card').remove()" class="text-muted delete-variant-link">Delete</a>
             </small>
         </div>
     </div>
@@ -344,7 +403,20 @@ $("#EventInfo_Title").keyup(function(){
     const productsTemplate = document.querySelector('#product-template').content;
     const variantsTemplate = document.querySelector('#variant-template').content;
     const productsWrapper = document.querySelector('#product-wrapper');
+
+    // Bind the delete product and add variant links
+    $('.delete-product-link').bind('click', function(e) {
+        // Remove the product card from DOM
+        $(this).closest('.product-card').remove();
+    });
+
+    $('.add-variant-link').bind('click', function(e) {
+        // Show the modal
+        $variantModal.modal('show');
+        $currentProduct = $(this).closest('.product-card');
+    })
     
+    // Bind the last added card's links
     function bindLatestProductLinks() {
         // Event handler for the delete link
         $('.delete-product-link').last().bind('click', function(e) {
