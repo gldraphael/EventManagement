@@ -60,8 +60,21 @@ namespace losol.EventManagement.Services
 			
 			if(shouldDeleteProducts)
 			{
-				// Delete the products that din't exist in the request
 				var originalProducts = await _productsService.GetForEventAsync(info.EventInfoId);
+				var originalVariants = originalProducts.SelectMany(p => p.ProductVariants);
+
+				// Delete the variants that don't exist in the provided object
+				var providedVariants = info.Products
+				                           .Where(p => p.ProductVariants != null)
+				                           .SelectMany(p => p.ProductVariants);
+				var variantsToDelete = originalVariants.Where(
+					originalVariant => !providedVariants
+											.Any(variant => variant.ProductVariantId == originalVariant.ProductVariantId)
+				);
+				_db.ProductVariants.RemoveRange(variantsToDelete);
+				result &= await _db.SaveChangesAsync() == variantsToDelete.Count();
+
+				// Delete the products that don't exist in the provided object
 				var producstToDelete = originalProducts.Where(op => !info.Products.Any(p => p.ProductId == op.ProductId));
 				_db.Products.RemoveRange(producstToDelete);
 				result &= await _db.SaveChangesAsync() == producstToDelete.Count();
