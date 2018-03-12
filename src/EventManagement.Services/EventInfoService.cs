@@ -81,6 +81,7 @@ namespace losol.EventManagement.Services
 			}
 
 			// Save the updates
+			_db.DetachAllEntities();
 			_db.EventInfos.Update(info);
 			result &= await _db.SaveChangesAsync() > 0;
 
