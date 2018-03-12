@@ -53,7 +53,7 @@ namespace losol.EventManagement.Services
 			return await _db.SaveChangesAsync() > 0;
 		}
 
-		public async Task<bool> UpdateAsync(EventInfo info)
+		public async Task<bool> UpdateEventWithProductsAsync(EventInfo info)
 		{
 			bool shouldDeleteProducts = info.Products != null;
 			bool result = true;

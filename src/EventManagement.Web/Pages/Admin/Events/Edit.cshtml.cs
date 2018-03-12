@@ -47,7 +47,7 @@ namespace losol.EventManagement.Pages.Admin.Events
                 return Page();
             }
 
-            await _eventsService.UpdateAsync(EventInfo);
+            await _eventsService.UpdateEventWithProductsAsync(EventInfo);
 
             return RedirectToPage("./Index");
         }
