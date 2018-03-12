@@ -11,10 +11,12 @@ namespace losol.EventManagement.Services
 	public class EventInfoService : IEventInfoService
 	{
 		private readonly ApplicationDbContext _db;
+		private readonly IProductsService _productsService;
 
-		public EventInfoService(ApplicationDbContext db)
+		public EventInfoService(ApplicationDbContext db, IProductsService productsService)
 		{
 			_db = db;
+			_productsService = productsService;
 		}
 
 		public async Task<List<EventInfo>> GetFeaturedEventsAsync() 
@@ -53,8 +55,23 @@ namespace losol.EventManagement.Services
 
 		public async Task<bool> UpdateAsync(EventInfo info)
 		{
+			bool shouldDeleteProducts = info.Products != null;
+			bool result = true;
+			
+			if(shouldDeleteProducts)
+			{
+				// Delete the products that din't exist in the request
+				var originalProducts = await _productsService.GetForEventAsync(info.EventInfoId);
+				var producstToDelete = originalProducts.Where(op => !info.Products.Any(p => p.ProductId == op.ProductId));
+				_db.Products.RemoveRange(producstToDelete);
+				result &= await _db.SaveChangesAsync() == producstToDelete.Count();
+			}
+
+			// Save the updates
 			_db.EventInfos.Update(info);
-			return await _db.SaveChangesAsync() > 0;
+			result &= await _db.SaveChangesAsync() > 0;
+
+			return result;
 		}
 	}
 }
