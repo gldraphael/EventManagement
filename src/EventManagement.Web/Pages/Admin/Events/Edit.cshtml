@@ -181,7 +181,7 @@
                                         <h5 class="card-title product-name">@p.Name</h5>
                                         <p class="card-text product-description">@p.Description</p>
                                         <!--If no variants exist-->
-                                        <h6 class="card-subtitle mb-2 text-muted product-price">@p.Price</h6>
+                                        <h6 class="card-subtitle mb-2 text-muted product-price">@((float)p.Price)</h6>
                                         <input class="product-m-count" type="hidden" value="@p.MandatoryCount" />
                                     </div>
                                     <div class="col-2">
@@ -197,7 +197,7 @@
                         <div class="row">
                             <div class="col-1"></div>
                             <div class="col variant-wrapper">
-                                @for(int j = 0; j < p.ProductVariants.Count; j++)
+                                @for(int j = 0; j < p.ProductVariants?.Count; j++)
                                 {
                                     var v = p.ProductVariants[j];
                                     <div class="card variant-card">
@@ -206,7 +206,7 @@
                                             <div class="col">
                                                 <h5 class="card-title variant-name">@v.Name</h5>
                                                 <p class="card-text variant-description">@v.Description</p>
-                                                <h6 class="card-subtitle mb-2 text-muted variant-price">@v.Price</h6>
+                                                <h6 class="card-subtitle mb-2 text-muted variant-price">@((float)v.Price)</h6>
                                             </div>
                                             <div class="col-2">
                                                 <small>
