@@ -13,6 +13,7 @@ namespace losol.EventManagement.Web.Services
 		private const string SCRIPT = "./Node/writeToPdf";
 		private const string TEMPLATE = "Templates/Certificates/CourseCertificate";
 		private readonly string filePath;
+		private readonly string scriptPath;
 		private readonly INodeServices _nodeServices;
 		private readonly IRenderService _renderService;
 		public CertificateWriter(INodeServices nodeServices, 
@@ -21,6 +22,7 @@ namespace losol.EventManagement.Web.Services
 		{
 			_nodeServices = nodeServices;
 			filePath = Path.Combine(environment.ContentRootPath, "certificates");
+			scriptPath = Path.Combine(environment.ContentRootPath, "Node", "pdf-a4-portrait.js");
 			if(!Directory.Exists(filePath))
 			{
 				Directory.CreateDirectory(filePath);
@@ -28,18 +30,31 @@ namespace losol.EventManagement.Web.Services
 			_renderService = renderService;
 		}
 
-		public async Task<bool> Write(string filename, CertificateVM vm)
+		public async Task<bool?> Write(string filename, CertificateVM vm)
 		{
 			var filepath  = Path.Combine(filePath, filename);
 			var html = await _renderService.RenderViewToStringAsync(TEMPLATE, vm);
-			var options = new { format = "A4" }; // options passed to html-pdf
-
-			return await _nodeServices.InvokeAsync<bool>(
+			var options = new // options passed to html-pdf
+			{ 
+				format = "A4",
+				viewportSize = new 
+				{
+					width = 1240,
+					height = 1754
+				},
+				script = scriptPath
+			}; 
+try{
+			return await _nodeServices.InvokeAsync<bool?>(
 				SCRIPT,
 				filepath,
 				html,
 				options
 			);
+}
+catch(NodeInvocationException) {
+	return false;
+}
 		}
 	}
 }
