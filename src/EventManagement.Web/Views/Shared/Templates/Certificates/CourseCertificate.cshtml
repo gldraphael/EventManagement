@@ -7,15 +7,16 @@
   <head>
     <meta charset="utf8">
     <title>Certificate</title>
-    <link href="https://fonts.googleapis.com/css?family=Carrois+Gothic+SC" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Material+Icons|Reenie+Beanie" rel="stylesheet">
+    <link 
+      href="https://fonts.googleapis.com/css?family=Material+Icons|Reenie+Beanie|Carrois+Gothic+SC|Libre+Baskerville" 
+      rel="stylesheet" />
     <style>
       html, body {
         margin: 0;
         padding: 0;
         font-family: 'Carrois Gothic SC';
         font-weight: 500;
-        font-size: 7px;
+        font-size: 16px;
         background: rgb(241,241,241);
         -webkit-print-color-adjust: exact;
         box-sizing: border-box;
@@ -52,7 +53,8 @@
         bottom: 5mm;
       }
       .group {
-        margin-top: 3mm;
+        padding: 0 25mm;
+        margin: 5mm;
       }
       .line {
         position: relative;
@@ -74,13 +76,26 @@
       }
 
       .featured {
-        padding: 25mm;
+        padding: 25mm 0 10mm 0;
         background-color: #336699;
         color: white;
       }
 
       .title {
         font-size: 32px
+      }
+
+      .subtitle {
+        font-size: 28px
+      }
+
+      .text {
+        font-family: 'Libre Baskerville', serif;
+        font-size: 14px
+      }
+
+      .light {
+        color: #555
       }
 
     </style>
@@ -90,7 +105,10 @@
 
         <div class="featured">
           <div class="line title">Certificate</div>
-          <div class="line">@Model.Title</div>
+          <div class="line subtitle">@Model.Title</div>          
+        </div>
+
+        <div class="group">
           <div class="line">@Model.RecipientName</div>
           <div class="line">Events with Dates</div>
         </div>
@@ -101,15 +119,17 @@
         </div>
 
         <div class="group">
-          <div class="line">Accreditations</div>
-          <div class="line">--diploma text--</div>
+          <div class="line"><strong>Accreditations</strong></div>
+          <div class="line text">@Model.Accreditation</div>
         </div>
 
         <div class="group">
           <div class="line">@Model.City, @Model.Date</div>
           <div class="line handwriting">@Model.IssuerPersonName</div>
-          <div class="line">Navn på den som er kursleder</div>
-          <div class="line">Digitally signed with signature (@Model.CertificateGuid)</div>
+          <div class="line"><small>Navn på den som er kursleder</small></div>
+        </div>
+        <div class="bottom">
+          <div class="line text light">Digitally signed with signature <code>@Model.CertificateGuid</code></div>
         </div>
     </div>
   </body>
