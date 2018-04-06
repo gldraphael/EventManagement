@@ -36,25 +36,15 @@ namespace losol.EventManagement.Web.Services
 			var html = await _renderService.RenderViewToStringAsync(TEMPLATE, vm);
 			var options = new // options passed to html-pdf
 			{ 
-				format = "A4",
-				viewportSize = new 
-				{
-					width = 1240,
-					height = 1754
-				},
-				script = scriptPath
+				format = "A4"
 			}; 
-try{
+
 			return await _nodeServices.InvokeAsync<bool?>(
 				SCRIPT,
 				filepath,
 				html,
 				options
 			);
-}
-catch(NodeInvocationException) {
-	return false;
-}
 		}
 
 		public string GetPathForFile(string filename)
