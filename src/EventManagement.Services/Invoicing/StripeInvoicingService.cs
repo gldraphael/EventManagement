@@ -31,8 +31,12 @@ namespace losol.EventManagement.Services.Invoicing
             {
                 Billing = StripeBilling.SendInvoice,
                 DaysUntilDue = eventInfo.DateStart.HasValue ? ((eventInfo.LastCancellationDate ?? eventInfo.LastRegistrationDate ?? eventInfo.DateStart) - DateTime.UtcNow).Value.Days : 30,
-                Description = $"Deltakelse for {order.Registration.ParticipantName} på {order.Registration.EventInfo.Title} "
+                Description = $"Deltakelse for {order.Registration.ParticipantName} på {order.Registration.EventInfo.Title} ",
+                Metadata = {
+                    { "OrderNo", $"{order.OrderId}" }
+                }
             };
+
             var createInvoiceService = new StripeInvoiceService();
             await createInvoiceService.CreateAsync(customer.Id, createInvoiceOptions);
         }
